@@ -243,10 +243,12 @@ def list_task_executions(
         queryset = queryset.filter(status=status)
     if created_by is not None:
         queryset = queryset.filter(created_by=created_by)
-    if start_date:
-        queryset = queryset.filter(created_at__gte=start_date)
-    if end_date:
-        queryset = queryset.filter(created_at__date__lte=end_date)
+    parsed_start = _parse_date(start_date)
+    parsed_end = _parse_end_date(end_date)
+    if parsed_start:
+        queryset = queryset.filter(created_at__gte=parsed_start)
+    if parsed_end:
+        queryset = queryset.filter(created_at__lte=parsed_end)
     if search and search.strip():
         queryset = queryset.filter(task_name__icontains=search.strip())
     if config_platform and config_platform.strip():
